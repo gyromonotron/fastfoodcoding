@@ -1,14 +1,20 @@
-# Welcome to your CDK C# project!
+﻿# CDK Project for Timer using Step Functions and Lambda
 
-This is a blank project for CDK development with C#.
+This is an example of how to deploy the Timer using Step Functions and Lambda using the AWS CDK.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## What is it?
 
-It uses the [.NET CLI](https://docs.microsoft.com/dotnet/articles/core/) to compile and execute your project.
+CDK allows you to design AWS resources using familiar programming languages, enabling you to take advantage of the power of modern programming languages to define your AWS environment in a predictable and efficient manner.
 
-## Useful commands
+## How to use it?
 
-* `dotnet build src` compile this app
-* `cdk deploy`       deploy this stack to your default AWS account/region
-* `cdk diff`         compare deployed stack with current state
-* `cdk synth`        emits the synthesized CloudFormation template
+1. Build the Lambda functions first:
+```
+cd ../src
+dotnet build --c Release
+```
+
+2. Deploy the CDK stack:
+```
+cdk deploy --parameters StateMachineNamePrefix=MyTimerStateMachine
+```
