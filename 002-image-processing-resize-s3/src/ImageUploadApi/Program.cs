@@ -22,9 +22,28 @@ var s3Client = new AmazonS3Client();
 var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME") ?? "fastfoodcoding-imageprocessing";
 var uploadPath = Environment.GetEnvironmentVariable("UPLOAD_PATH") ?? "images/";
 
+var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".dng", ".heif", ".heic", ".wbmp" };
+
 // upload file endpoint (images)
 app.MapPost("/upload", async (IFormFile file) =>
 {
+    if (file == null || file.Length == 0)
+    {
+        return Results.BadRequest("File is empty");
+    }
+
+    // only allow certain file extensions
+    if (!allowedExtensions.Contains(Path.GetExtension(file.FileName).ToLower(), StringComparer.OrdinalIgnoreCase))
+    {
+        return Results.BadRequest("Invalid file extension");
+    }
+
+    // don't allow files larger than 25MB
+    if (file.Length > 25 * 1024 * 1024)
+    {
+        return Results.BadRequest("File is too large");
+    }
+
     using var inputStream = file.OpenReadStream();
     using var memoryStream = new MemoryStream();
     inputStream.CopyTo(memoryStream);
@@ -38,7 +57,7 @@ app.MapPost("/upload", async (IFormFile file) =>
     };
 
     var response = await s3Client.PutObjectAsync(putRequest);
-    return response.HttpStatusCode;
+    return Results.StatusCode((int)response.HttpStatusCode);
 })
 .DisableAntiforgery(); // Disable antiforgery for this endpoint. Don't do this in production.
 

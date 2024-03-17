@@ -35,6 +35,7 @@ namespace FastFoodCoding.ImageProcessing.Cdk
                 Default = "r"
             });
 
+            // define a public S3 bucket to store images
             var s3Bucket = new Bucket(this, "ImageBucket", new BucketProps
             {
                 BucketName = bucketName.ValueAsString,
@@ -48,6 +49,7 @@ namespace FastFoodCoding.ImageProcessing.Cdk
                 })
             });
 
+            // allow anyone to read objects from the bucket
             s3Bucket.AddToResourcePolicy(new PolicyStatement(new PolicyStatementProps
             {
                 Actions = ["s3:GetObject"],
@@ -55,6 +57,7 @@ namespace FastFoodCoding.ImageProcessing.Cdk
                 Principals = [new StarPrincipal()]
             }));
 
+            // allow the lambda function to read and write objects to the bucket
             var imageResizeLambdaRole = new Role(this, "ImageResizeLambdaRole", new RoleProps
             {
                 AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
@@ -78,6 +81,7 @@ namespace FastFoodCoding.ImageProcessing.Cdk
                 }
             });
 
+            // define a lambda function to resize images
             var imageResizeLambda = new Function(this, "ImageResizeLambda", new FunctionProps
             {
                 Runtime = Runtime.DOTNET_8,
@@ -93,11 +97,14 @@ namespace FastFoodCoding.ImageProcessing.Cdk
                 }
             });
 
+            // add an event notification to the bucket to trigger the lambda function when an image is uploaded.
+            // prefix is used to filter the event notifications to only trigger when an image is uploaded to the source folder
             s3Bucket.AddEventNotification(EventType.OBJECT_CREATED, new LambdaDestination(imageResizeLambda), new NotificationKeyFilter
             {
                 Prefix = sourceFolder.ValueAsString + "/"
             });
 
+            // allow the API lambda function to write objects to the bucket
             var imageUploadApiLambdaRole = new Role(this, "ImageUploadApiLambdaRole", new RoleProps
             {
                 AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
@@ -120,6 +127,7 @@ namespace FastFoodCoding.ImageProcessing.Cdk
                 }
             });
 
+            // define a lambda function to upload images
             var imageUploadApiLambda = new Function(this, "ImageUploadApiLambda", new FunctionProps
             {
                 Runtime = Runtime.DOTNET_8,
@@ -136,6 +144,7 @@ namespace FastFoodCoding.ImageProcessing.Cdk
                 }
             });
 
+            // define an API Gateway (HTTP) to upload images
             _ = new HttpApi(this, "ImageUploadApi", new HttpApiProps
             {
                 DefaultIntegration = new HttpLambdaIntegration(

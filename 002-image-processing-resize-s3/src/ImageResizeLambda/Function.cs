@@ -15,6 +15,7 @@ public class Function
 {
     private readonly IAmazonS3 _s3Client;
 
+    // Predefined sizes for images
     private readonly List<(int Width, int Height, string Label)> _wideSizes = [(1280, 720, "L"), (1200, 628, "M"), (854, 480, "S"), (427, 240, "XS")];
     private readonly List<(int Width, int Height, string Label)> _tallSizes = [(720, 1280, "L"), (628, 1200, "M"), (480, 854, "S"), (240, 427, "XS")];
     private readonly List<(int Width, int Height, string Label)> _squareSizes = [(1080, 1080, "SL"), (540, 540, "SM"), (360, 360, "SS"), (180, 180, "SXS")];
@@ -30,7 +31,7 @@ public class Function
     public Function(IAmazonS3 s3Client)
     {
         this._s3Client = s3Client;
-        _resizedObjectPath = Environment.GetEnvironmentVariable("RESIZED_OBJECT_PATH") ?? "/r/";
+        _resizedObjectPath = Environment.GetEnvironmentVariable("RESIZED_OBJECT_PATH") ?? "/resized/";
         _convertToWebp = bool.TryParse(Environment.GetEnvironmentVariable("CONVERT_TO_WEBP"), out bool convert) && convert;
         _convertQuality = int.TryParse(Environment.GetEnvironmentVariable("CONVERT_QUALITY"), out int quality) ? quality : 100;
     }
@@ -111,6 +112,7 @@ public class Function
         }
     }
 
+    // Helper method to get the image format based on the file extension and the convertToWebp flag
     private static SKEncodedImageFormat GetEncodedImageFormat(bool convertToWebp, string fileExtension) =>
     convertToWebp ? SKEncodedImageFormat.Webp : fileExtension.ToLower() switch
     {
