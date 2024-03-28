@@ -120,9 +120,6 @@ public class Function
         ".jpg" or ".jpeg" => SKEncodedImageFormat.Jpeg,
         ".gif" => SKEncodedImageFormat.Gif,
         ".bmp" => SKEncodedImageFormat.Bmp,
-        ".wbmp" => SKEncodedImageFormat.Wbmp,
-        ".dng" => SKEncodedImageFormat.Dng,
-        ".heif" or ".heic" => SKEncodedImageFormat.Heif,
         ".webp" => SKEncodedImageFormat.Webp,
         _ => SKEncodedImageFormat.Png
     };

@@ -22,7 +22,7 @@ var s3Client = new AmazonS3Client();
 var bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME") ?? "fastfoodcoding-imageprocessing";
 var uploadPath = Environment.GetEnvironmentVariable("UPLOAD_PATH") ?? "images/";
 
-var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".dng", ".heif", ".heic", ".wbmp" };
+var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
 
 // upload file endpoint (images)
 app.MapPost("/upload", async (IFormFile file) =>
