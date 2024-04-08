@@ -40,7 +40,7 @@ namespace FastFoodCoding.Timer.Cdk
             {
                 Runtime = Runtime.DOTNET_8,
                 Handler = "ExecutorLambda::ExecutorLambda.Function::FunctionHandler",
-                Code = Code.FromAsset("../src/ExecutorLambda/bin/Release/net8.0/"),
+                Code = Code.FromAsset("../src/ExecutorLambda/bin/Release/net8.0/linux-arm64/publish"),
                 Architecture = Architecture.ARM_64,
                 MemorySize = 256,
                 Timeout = Duration.Minutes(2),
@@ -106,7 +106,7 @@ namespace FastFoodCoding.Timer.Cdk
             {
                 Runtime = Runtime.DOTNET_8,
                 Handler = "TimerLambda::TimerLambda.Function::FunctionHandler",
-                Code = Code.FromAsset("../src/TimerLambda/bin/Release/net8.0/"),
+                Code = Code.FromAsset("../src/TimerLambda/bin/Release/net8.0/linux-arm64/publish"),
                 Architecture = Architecture.ARM_64,
                 MemorySize = 256,
                 Timeout = Duration.Minutes(2),
