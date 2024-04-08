@@ -20,4 +20,4 @@ cdk deploy --parameters BucketName=fastfoodcoding-imageprocessing SourceFolder=i
 
 ## More information
 
-For more information about this project, please refer to the blog post at [fastfoodcoding.com](https://fastfoodcoding.com/docs/aws/image-processing-and-resize/).
+For more information about this project, please refer to the blog post at [fastfoodcoding.com: Resize images on upload to S3 using Lambda and .NET](https://fastfoodcoding.com/recipes/aws/image-resize/resize-on-upload-to-s3/).

@@ -17,4 +17,4 @@ cdk deploy --parameters StateMachineNamePrefix=MyTimerStateMachine
 
 ## More information
 
-For more information about this project, please refer to the blog post at [fastfoodcoding.com](https://fastfoodcoding.com/docs/aws/timer-with-step-functions-and-lambdas/).
+For more information about this project, please refer to the blog post at [fastfoodcoding.com: Timer with Step Functions and AWS Lambda (.NET8)](https://fastfoodcoding.com/recipes/aws/timer-with-step-functions-and-lambdas/).

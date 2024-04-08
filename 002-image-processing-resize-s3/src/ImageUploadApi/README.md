@@ -1,6 +1,6 @@
 # Image Upload API
 
-This project is a simple API for uploading images. It is built using .NET8 and it provides a single endpoint for uploading images. The imaages are transferred to a S3 bucket.
+This project is a simple API for uploading images. It is built using .NET8 and it provides a single endpoint for uploading images. The images are transferred to a S3 bucket.
 
 ## Usage
 

@@ -1,6 +1,6 @@
 # Image resize using Lambda@Edge and CloudFront
 
-> **Disclaimer:** This project is for educational purposes only. Do not use it in production without proper testing and security checks. More information can be found on [fastfoodcoding.com/docs/aws/resize-images-cloudfront-lambda-edge](https://fastfoodcoding.com/docs/aws/resize-images-cloudfront-lambda-edge/).
+> **Disclaimer:** This project is for educational purposes only. Do not use it in production without proper testing and security checks. More information can be found on [Resize images on CloudFront using Lambda@Edge (Python/Pillow)](https://fastfoodcoding.com/recipes/aws/image-resize/resize-on-request-cloudfront-edge/).
 
 This is a simple example how to resize images on CloudFront Origin Request using Lambda@Edge.
 The function is written in Python and uses [Pillow](https://pillow.readthedocs.io/) to process the images.

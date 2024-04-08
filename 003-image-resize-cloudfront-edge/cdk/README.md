@@ -18,4 +18,4 @@ cdk deploy --parameters BucketName=fastfoodcoding-edge --parameters DestinationF
 
 ## More information
 
-For more information about this project, please refer to the blog post at [fastfoodcoding.com](https://fastfoodcoding.com/docs/aws/resize-images-cloudfront-lambda-edge/).
+For more information about this project, please refer to the blog post at [fastfoodcoding.com: Resize images on CloudFront using Lambda@Edge (Python/Pillow)](https://fastfoodcoding.com/recipes/aws/image-resize/resize-on-request-cloudfront-edge/).
