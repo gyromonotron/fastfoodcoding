@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CodeBuild project for Hugo site deployment
+Parameters:
+  ProjectName:
+    Type: String
+    Description: CodeBuild project name
+    Default: HugoSiteBuild
+  SiteBucketName:
+    Type: String
+    Description: Site S3 bucket name
+  DistributionId:
+    Type: String
+    Description: CloudFront distribution ID
+  Region:
+    Type: String
+    Description: AWS region
+  HugoVersion:
+    Type: String
+    Description: Hugo version
+    Default: 0.127.0
+  GitHubRepo:
+    Type: String
+    Description: GitHub repository URL
+Resources:
+  ServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CodeBuildServiceRolePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource:
+                  - !Sub arn:aws:logs:${Region}:${AWS::AccountId}:log-group:/aws/codebuild/${ProjectName}
+                  - !Sub arn:aws:logs:${Region}:${AWS::AccountId}:log-group:/aws/codebuild/${ProjectName}:*
+        - PolicyName: DeploySiteCodeBuildPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:DeleteObject
+                  - s3:GetBucketAcl
+                  - s3:GetBucketLocation
+                  - s3:ListBucket
+                Resource:
+                  - !Sub arn:aws:s3:::${SiteBucketName}
+                  - !Sub arn:aws:s3:::${SiteBucketName}/*
+              - Effect: Allow
+                Action:
+                  - cloudfront:CreateInvalidation
+                Resource:
+                  - !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${DistributionId}
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Ref ${ProjectName}
+      Description: Build and deploy Hugo site
+      ConcurrentBuildLimit: 1
+      Environment:
+        Type: ARM_LAMBDA_CONTAINER
+        ComputeType: BUILD_LAMBDA_1GB
+        Image: aws/codebuild/amazonlinux-aarch64-lambda-standard:go1.21
+      ServiceRole: !GetAtt ServiceRole.Arn
+      Source:
+        Type: GITHUB
+        BuildSpec: !Sub |
+          version: 0.2
+          phases:
+            install:
+              commands:
+                - curl -Ls https://github.com/gohugoio/hugo/releases/download/v${HugoVersion}/hugo_extended_${HugoVersion}_linux-arm64.tar.gz -o /tmp/hugo.tar.gz
+                - mkdir /tmp/hugo_${HugoVersion}
+                - tar xf /tmp/hugo.tar.gz -C /tmp/hugo_${HugoVersion}
+                - /tmp/hugo_${HugoVersion}/hugo version
+            build:
+              commands:
+                - /tmp/hugo_${HugoVersion}/hugo --minify --gc
+            post_build:
+              commands:
+                - aws s3 sync public/ s3://${SiteBucketName} --region us-east-1 --delete
+                - aws cloudfront create-invalidation --distribution-id ${DistributionId} --paths '/*'
+        Location: !Ref GitHubRepo
+      Artifacts:
+        Type: NO_ARTIFACTS
+      Triggers:
+        Webhook: true
+        BuildType: BUILD
+        FilterGroups:
+          - - Type: EVENT
+              Pattern: PUSH
+      LogsConfig:
+        CloudWatchLogs:
+          Status: ENABLED
+          GroupName: !Sub /aws/codebuild/${ProjectName}
